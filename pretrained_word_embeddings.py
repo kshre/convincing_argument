@@ -104,7 +104,7 @@ for csv_file in sorted(os.listdir(ARGUMENT_DATA_DIR)):
             if words[0] in embeddings_index.keys():
                 V_d = embeddings_index[words[0]]
             else:
-                V_d = embeddings_index['unk']]
+                V_d = embeddings_index['unk']
 
             for word in words[1:]:
                 if word in embeddings_index.keys():
