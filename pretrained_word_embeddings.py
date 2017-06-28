@@ -115,8 +115,8 @@ for csv_file in sorted(os.listdir(ARGUMENT_DATA_DIR)):
             #print(V_d)
             #print(vecs[0,:])
             #print(vecs[1,:])
-            cur_max1 = np.sum(np.dot(np.asarray(vecs[0,:], dtype='float32'), V_d), dtype='float32') #np.amax(np.dot(vecs[0,:], vecs[2:,:].T))
-            cur_max2 = np.sum(np.dot(np.asarray(vecs[1,:], dtype='float32'), V_d), dtype='float32') #np.amax(np.dot(vecs[1,:], vecs[2:,:].T))
+            cur_max1 = np.sum(np.dot(np.asarray(vecs[0,:], dtype='float32'), V_d), dtype='object') #np.amax(np.dot(vecs[0,:], vecs[2:,:].T))
+            cur_max2 = np.sum(np.dot(np.asarray(vecs[1,:], dtype='float32'), V_d), dtype='object') #np.amax(np.dot(vecs[1,:], vecs[2:,:].T))
 
             print("score of arg 1")
             print(cur_max1)
