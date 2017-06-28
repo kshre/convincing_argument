@@ -100,13 +100,13 @@ for csv_file in sorted(os.listdir(ARGUMENT_DATA_DIR)):
             vecs = cv.fit_transform(texts)
             words = vecs.get_feature_names()
 
-            if embeddings_index[words[0]] == None:
-                V_d = embeddings_index[words['unk']]
-            else:
+            if embeddings_index[words[0]]:
                 V_d = embeddings_index[words[0]]
+            else:
+                V_d = embeddings_index[words['unk']]
 
             for word in words[1:]:
-                if embeddings_index[word] not None:
+                if embeddings_index[word]:
                     V_d = np.vstack([V_d, embeddings_index[word]])
                 else:
                     V_d = np.vstack([V_d, embeddings_index['unk']])
