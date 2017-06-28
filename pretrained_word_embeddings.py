@@ -21,7 +21,6 @@ http://nlp.stanford.edu/data/glove.6B.zip
 http://www.cs.cmu.edu/afs/cs.cmu.edu/project/theo-20/www/data/news20.html
 '''
 
-
 import csv
 from collections import Counter, defaultdict
 import math
@@ -72,11 +71,8 @@ print('Found %s word vectors.' % len(embeddings_index))
 # second, prepare text samples and their labels
 print('Processing arguments dataset')
 
-pid = []
-argument1 = []
-argument2 = []
-labels_ = []
-
+acc_scores = []
+acc_scores1 = []
 
 for csv_file in sorted(os.listdir(ARGUMENT_DATA_DIR)):
     """
@@ -89,10 +85,11 @@ for csv_file in sorted(os.listdir(ARGUMENT_DATA_DIR)):
     """
     with open(ARGUMENT_DATA_DIR + csv_file, 'rb') as f:
         preds = []
+        preds1 = []
         labels = []
         reader = csv.reader(f, delimiter='\t')
         next(reader, None)
-        for row in reader:
+        for i, row in enumerate(reader):
             pid, label, text1, text2 = row
             labels.append(int(label[1]) - 1)
             texts = [text1, text2] #+ [w for w in wiki if len(w) < 2000]
@@ -101,37 +98,67 @@ for csv_file in sorted(os.listdir(ARGUMENT_DATA_DIR)):
             vecs = cv.fit_transform(texts)
             words = cv.get_feature_names()
 
-            if str(words[0]) in embeddings_index.keys():
+            if words[0].encode('utf-8') in embeddings_index.keys():
                 V_d = embeddings_index[words[0]]
             else:
                 V_d = embeddings_index['unk']
 
             for word in words[1:]:
-                if str(word) in embeddings_index.keys():
+                if word.encode('utf-8') in embeddings_index.keys():
                     V_d = np.vstack([V_d, embeddings_index[word]])
                 else:
                     V_d = np.vstack([V_d, embeddings_index['unk']])
 
-            #print(V_d)
-            #print(vecs[0,:])
+            #print(V_d.dtype)
+            #print(vecs[0,:].astype('float32').dtype)
             #print(vecs[1,:])
-            cur_max1 = np.sum(np.dot(np.asarray(vecs[0,:], dtype='float32'), V_d), dtype='object') #np.amax(np.dot(vecs[0,:], vecs[2:,:].T))
-            cur_max2 = np.sum(np.dot(np.asarray(vecs[1,:], dtype='float32'), V_d), dtype='object') #np.amax(np.dot(vecs[1,:], vecs[2:,:].T))
-
-            print("score of arg 1")
+            
+            cur_max1 = vecs[0,:].astype('float32').dot(V_d).sum() #np.amax(np.dot(vecs[0,:], vecs[2:,:].T))
+            cur_max2 = vecs[1,:].astype('float32').dot(V_d).sum() #np.amax(np.dot(vecs[1,:], vecs[2:,:].T))
+            
+            print("----------", str(i), "-----------")
+            print("Argument 1:")
+            print(text1)
+            print("Score of argument 1:")
             print(cur_max1)
-
-            print("score of arg 2")
+            print("Argument 2:")
+            print(text2)
+            print("Score of argument 2:")
             print(cur_max2)
+            print("Gold label:")
+            print(label)
+            
+            if cur_max1 == cur_max2:
+                preds.append(bool(random.randint(0,1)))
+            else:
+                preds.append( np.absolute(cur_max2)>np.absolute(cur_max1) )
 
-            #if cur_max1 == cur_max2:
-            #    preds.append(bool(random.randint(0,1)))
-            #else:
-            #    preds.append( cur_max2>cur_max1 )
-        #acc = accuracy_score(labels, preds)
-        #print(csv_file, acc)
-        #acc_scores.append(acc)
-#print(mean)
+            if cur_max1 == cur_max2:
+                preds1.append(bool(random.randint(0,1)))
+            else:
+                preds1.append(cur_max2 > cur_max1)
+
+        acc = accuracy_score(labels, preds)
+        acc1 = accuracy_score(labels, preds1)
+
+        print(csv_file, acc)
+        print(csv_file, acc1)
+
+        acc_scores.append(acc)
+        acc_scores1.append(acc1)
+
+print(mean(acc_scores))
+print(mean(acc_scores1))
+
+def write_file(accuracies, fname):
+    filename = fname + ".txt"
+    with open(filename, mode="wb") as outfile:
+        for line in accuracies:
+            outfile.write(str(line))
+            outfile.write("\n")
+
+write_file(acc_scores, "./accuracies_abs") 
+write_file(acc_scores1, "./accuracies_normal")
 
 """
 texts = []  # list of text samples
