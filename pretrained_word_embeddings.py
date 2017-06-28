@@ -99,7 +99,7 @@ for csv_file in sorted(os.listdir(ARGUMENT_DATA_DIR)):
 
             cv = CountVectorizer(stop_words='english', binary=False)
             vecs = cv.fit_transform(texts)
-            words = vecs.get_feature_names()
+            words = cv.get_feature_names()
 
             if embeddings_index[words[0]]:
                 V_d = embeddings_index[words[0]]
