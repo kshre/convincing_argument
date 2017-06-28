@@ -125,9 +125,9 @@ for csv_file in sorted(os.listdir(ARGUMENT_DATA_DIR)):
             else:
                 preds.append( cur_max2>cur_max1 )
         acc = accuracy_score(labels, preds)
-        print csv_file,acc
+        print(csv_file, acc)
         acc_scores.append(acc)
-print mean
+#print(mean)
 
 """
 texts = []  # list of text samples
