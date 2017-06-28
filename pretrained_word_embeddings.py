@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 """
 This file will use pretrained word embeddings to prepare representations
 of the argument and the wikipedia articles, then do a sum over the dot
@@ -19,7 +21,6 @@ http://nlp.stanford.edu/data/glove.6B.zip
 http://www.cs.cmu.edu/afs/cs.cmu.edu/project/theo-20/www/data/news20.html
 '''
 
-from __future__ import print_function
 
 import csv
 from collections import Counter, defaultdict
