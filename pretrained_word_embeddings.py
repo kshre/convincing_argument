@@ -112,6 +112,9 @@ for csv_file in sorted(os.listdir(ARGUMENT_DATA_DIR)):
                 else:
                     V_d = np.vstack([V_d, embeddings_index['unk']])
 
+            print(V_d.shape)
+            print(vecs[0,:].shape)
+            print(vecs[1,:].shape)
             cur_max1 = np.dot(vecs[0,:], V_d).sum()#np.amax(np.dot(vecs[0,:], vecs[2:,:].T))
             cur_max2 = np.dot(vecs[1,:], V_d).sum()#np.amax(np.dot(vecs[1,:], vecs[2:,:].T))
 
