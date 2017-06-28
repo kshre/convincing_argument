@@ -106,8 +106,8 @@ for csv_file in sorted(os.listdir(ARGUMENT_DATA_DIR)):
             else:
                 V_d = embeddings_index[words['unk']]
 
-            for word in words[1:] is not None:
-                if embeddings_index[word]:
+            for word in words[1:]:
+                if embeddings_index[word] is not None:
                     V_d = np.vstack([V_d, embeddings_index[word]])
                 else:
                     V_d = np.vstack([V_d, embeddings_index['unk']])
