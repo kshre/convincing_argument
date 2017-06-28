@@ -112,8 +112,8 @@ for csv_file in sorted(os.listdir(ARGUMENT_DATA_DIR)):
                 else:
                     V_d = np.vstack([V_d, embeddings_index['unk']])
 
-            print(V_d)
-            print(vecs[0,:])
+            #print(V_d)
+            #print(vecs[0,:])
             #print(vecs[1,:])
             cur_max1 = np.dot(np.asarray(vecs[0,:], dtype='object'), np.asarray(V_d, dtype='object')).sum()#np.amax(np.dot(vecs[0,:], vecs[2:,:].T))
             cur_max2 = np.dot(np.asarray(vecs[1,:], dtype='object'), np.asarray(V_d, dtype='object')).sum()#np.amax(np.dot(vecs[1,:], vecs[2:,:].T))
@@ -124,13 +124,13 @@ for csv_file in sorted(os.listdir(ARGUMENT_DATA_DIR)):
             print("score of arg 2")
             print(cur_max2)
 
-            if cur_max1 == cur_max2:
-                preds.append(bool(random.randint(0,1)))
-            else:
-                preds.append( cur_max2>cur_max1 )
-        acc = accuracy_score(labels, preds)
-        print(csv_file, acc)
-        acc_scores.append(acc)
+            #if cur_max1 == cur_max2:
+            #    preds.append(bool(random.randint(0,1)))
+            #else:
+            #    preds.append( cur_max2>cur_max1 )
+        #acc = accuracy_score(labels, preds)
+        #print(csv_file, acc)
+        #acc_scores.append(acc)
 #print(mean)
 
 """
