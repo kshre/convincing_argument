@@ -114,7 +114,7 @@ for csv_file in sorted(os.listdir(ARGUMENT_DATA_DIR)):
 
             print(V_d)
             print(vecs[0,:])
-            print(vecs[1,:])
+            #print(vecs[1,:])
             cur_max1 = np.dot(vecs[0,:], np.asarray(V_d, dtype='float32')).sum()#np.amax(np.dot(vecs[0,:], vecs[2:,:].T))
             cur_max2 = np.dot(vecs[1,:], np.asarray(V_d, dtype='float32')).sum()#np.amax(np.dot(vecs[1,:], vecs[2:,:].T))
 
