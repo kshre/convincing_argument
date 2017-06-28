@@ -100,10 +100,10 @@ for csv_file in sorted(os.listdir(ARGUMENT_DATA_DIR)):
             vecs = cv.fit_transform(texts)
             words = vecs.get_feature_names()
 
-            if embeddings_index[words[0]] not None:
-                V_d = embeddings_index[words[0]]
-            else:
+            if embeddings_index[words[0]] == None:
                 V_d = embeddings_index[words['unk']]
+            else:
+                V_d = embeddings_index[words[0]]
 
             for word in words[1:]:
                 if embeddings_index[word] not None:
