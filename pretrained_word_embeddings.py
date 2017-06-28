@@ -21,6 +21,16 @@ http://www.cs.cmu.edu/afs/cs.cmu.edu/project/theo-20/www/data/news20.html
 
 from __future__ import print_function
 
+import csv
+from collections import Counter, defaultdict
+import math
+from os import listdir
+from scipy.stats import pearsonr, spearmanr
+from numpy import mean
+from sklearn.metrics import accuracy_score
+from sklearn.feature_extraction.text import CountVectorizer
+import random
+
 import os
 import sys
 import numpy as np
@@ -32,9 +42,11 @@ from keras.layers import Conv1D, MaxPooling1D, Embedding
 from keras.models import Model
 
 BASE_DIR = './data/'
-GLOVE_DIR = BASE_DIR + 'glove'
-ARGUMENT_DATA_DIR = BASE_DIR + 'arguments'
-WIKI_DATA_DIR = BASE_DIR + 'wiki'
+
+GLOVE_DIR = BASE_DIR + 'glove/'
+ARGUMENT_DATA_DIR = BASE_DIR + 'arguments/'
+WIKI_DATA_DIR = BASE_DIR + 'wiki/'
+
 MAX_SEQUENCE_LENGTH = 1000
 MAX_NB_WORDS = 20000
 EMBEDDING_DIM = 100
@@ -57,8 +69,67 @@ f.close()
 print('Found %s word vectors.' % len(embeddings_index))
 
 # second, prepare text samples and their labels
-print('Processing text dataset')
+print('Processing arguments dataset')
 
+pid = []
+argument1 = []
+argument2 = []
+labels_ = []
+
+
+for csv_file in sorted(os.listdir(ARGUMENT_DATA_DIR)):
+    """
+    with open(ARGUMENT_DATA_DIR + csv_file, 'rb') as f:
+        reader = csv.reader(f, delimiter='\t')
+        next(reader, None)
+        for row in reader:
+            _, _, text1, text2 = row
+            all_arguments += [text1, text2]
+    """
+    with open(ARGUMENT_DATA_DIR + csv_file, 'rb') as f:
+        preds = []
+        labels = []
+        reader = csv.reader(f, delimiter='\t')
+        next(reader, None)
+        for row in reader:
+            pid, label, text1, text2 = row
+            labels.append(int(label[1]) - 1)
+            texts = [text1, text2] #+ [w for w in wiki if len(w) < 2000]
+
+            cv = CountVectorizer(stop_words='english', binary=False)
+            vecs = cv.fit_transform(texts)
+            words = vecs.get_feature_names()
+
+            if embeddings_index[words[0]] not None:
+                V_d = embeddings_index[words[0]]
+            else:
+                V_d = embeddings_index[words['unk']]
+
+            for word in words[1:]:
+                if embeddings_index[word] not None:
+                    V_d = np.vstack([V_d, embeddings_index[word]])
+                else:
+                    V_d = np.vstack([V_d, embeddings_index['unk']])
+
+            cur_max1 = np.dot(vecs[0,:], V_d).sum()#np.amax(np.dot(vecs[0,:], vecs[2:,:].T))
+            cur_max2 = np.dot(vecs[1,:], V_d).sum()#np.amax(np.dot(vecs[1,:], vecs[2:,:].T))
+
+            print "score of arg 1"
+            print cur_max1
+
+            print "score of arg 2"
+            print cur_max2
+
+            if cur_max1 == cur_max2:
+                preds.append(bool(random.randint(0,1)))
+            else:
+                preds.append( cur_max2>cur_max1 )
+        acc = accuracy_score(labels, preds)
+        print csv_file,acc
+        acc_scores.append(acc)
+print mean
+
+"""
 texts = []  # list of text samples
 labels_index = {}  # dictionary mapping label name to numeric id
 labels = []  # list of label ids
@@ -83,6 +154,7 @@ for name in sorted(os.listdir(ARGUMENT_DATA_DIR)):
                 labels.append(label_id)
 
 print('Found %s texts.' % len(texts))
+
 
 # finally, vectorize the text samples into a 2D integer tensor
 tokenizer = Tokenizer(num_words=MAX_NB_WORDS)
@@ -155,3 +227,4 @@ model.fit(x_train, y_train,
           batch_size=128,
           epochs=10,
           validation_data=(x_val, y_val))
+"""
