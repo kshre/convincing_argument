@@ -114,11 +114,11 @@ for csv_file in sorted(os.listdir(ARGUMENT_DATA_DIR)):
             cur_max1 = np.dot(vecs[0,:], V_d).sum()#np.amax(np.dot(vecs[0,:], vecs[2:,:].T))
             cur_max2 = np.dot(vecs[1,:], V_d).sum()#np.amax(np.dot(vecs[1,:], vecs[2:,:].T))
 
-            print "score of arg 1"
-            print cur_max1
+            print("score of arg 1")
+            print(cur_max1)
 
-            print "score of arg 2"
-            print cur_max2
+            print("score of arg 2")
+            print(cur_max2)
 
             if cur_max1 == cur_max2:
                 preds.append(bool(random.randint(0,1)))
